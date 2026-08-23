@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 
@@ -24,8 +23,11 @@ public class MecanumFieldOrientatedOpMode extends OpMode {
 
     @Override
     public void init() {
-        drive.init(hardwareMap);
+        drive.init(hardwareMap, this.telemetry);
         intake.init(hardwareMap);
+
+        telemetry.addData("Initialization" , "Init complete");
+        telemetry.update();
     }
 
     @Override
@@ -37,9 +39,7 @@ public class MecanumFieldOrientatedOpMode extends OpMode {
         intakeForward = gamepad1.y;
         intakeBackward = gamepad1.a;
 
-        // Having issues with IMU
-        drive.driveFieldRelative(forward, strafe, rotate, this.telemetry);
-        // drive.drive(forward, strafe, rotate);
+        drive.drive(forward, strafe, rotate);
 
         // Will need debouncing for intake functionality:
         // If we press the Y button

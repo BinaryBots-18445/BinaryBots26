@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class BBMecanumDrive {
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -74,5 +76,19 @@ public class BBMecanumDrive {
         telemetry.addData("Right Motors",
                 "BR: %.2f, FR: %.2f",
                 backRight.getPower(), frontRight.getPower());
+    }
+
+    public void driveFieldRelative(double forward, double strafe, double rotate){
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(strafe, forward);
+
+        theta = AngleUnit.normalizeRadians(theta - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+
+        double newForward = r * Math.sin(theta);
+        double newStrafe =  r * Math.cos(theta);
+
+        telemetry.addLine().addData("Driving", "Fwd: %.2f, Stf: %.2f, Rot: %.2f",
+                newForward, newStrafe, rotate);
+        this.drive(newForward, newStrafe, rotate);
     }
 }

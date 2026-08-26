@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 
 @TeleOp
-public class MecanumFieldOrientedOp extends OpMode {
+public class DriverOrientatedOp extends OpMode {
     BBMecanumDrive drive = new BBMecanumDrive();
     Intake intake = new Intake();
 
@@ -25,9 +25,6 @@ public class MecanumFieldOrientedOp extends OpMode {
     public void init() {
         drive.init(hardwareMap, this.telemetry);
         intake.init(hardwareMap);
-
-        telemetry.addData("Initialization" , "Init complete");
-        telemetry.update();
     }
 
     @Override
@@ -39,7 +36,7 @@ public class MecanumFieldOrientedOp extends OpMode {
         intakeForward = gamepad1.y;
         intakeBackward = gamepad1.a;
 
-        drive.driveFieldRelative(forward, strafe, rotate);
+        drive.drive(forward, strafe, rotate);
 
         // Will need debouncing for intake functionality:
         // If we press the Y button

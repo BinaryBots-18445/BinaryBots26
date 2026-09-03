@@ -25,8 +25,10 @@ public class BBMecanumDrive {
 
         // Establishing the direction and mode for the motors
         // Direction
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        // Left motors were flipped, so the normal code also had to be flipped.
+        // So we made the FL and BL motors from Reverse to Forward.
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
 
@@ -35,6 +37,12 @@ public class BBMecanumDrive {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Zero Power Mode - Brake so robot does not move when not receiving power
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hwMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot hubOrientation = new RevHubOrientationOnRobot(

@@ -25,13 +25,16 @@ public class MecanumDriverOrientedOp extends OpMode {
     public void init() {
         drive.init(hardwareMap, this.telemetry);
         intake.init(hardwareMap);
+
+        telemetry.addData("Initialization" , "Init complete");
+        telemetry.update();
     }
 
     @Override
     public void loop() {
         forward = gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x * -1; // Inverted x input because left and right were being reversed
-        rotate = gamepad1.right_stick_x;
+        rotate = gamepad1.right_stick_x * -1; // Inverted x input because left and right were being reversed
 
         intakeForward = gamepad1.y;
         intakeBackward = gamepad1.a;

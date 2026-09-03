@@ -25,8 +25,9 @@ public class BBMecanumDrive {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
 
         // Establishing the direction and mode for the motors
-        // Left motors were flipped, so we made the FL and BL motors from Reverse to Forward.
-        // CHECK: Wheels are rotating correctly when testing and not fighting each other
+        // Direction
+        // Left motors were flipped, so the normal code also had to be flipped.
+        // So we made the FL and BL motors from Reverse to Forward.
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);

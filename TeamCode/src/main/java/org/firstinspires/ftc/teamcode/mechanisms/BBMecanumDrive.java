@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BBMecanumDrive {
     private DcMotor frontLeft;
@@ -24,9 +25,8 @@ public class BBMecanumDrive {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
 
         // Establishing the direction and mode for the motors
-        // Direction
-        // Left motors were flipped, so the normal code also had to be flipped.
-        // So we made the FL and BL motors from Reverse to Forward.
+        // Left motors were flipped, so we made the FL and BL motors from Reverse to Forward.
+        // CHECK: Wheels are rotating correctly when testing and not fighting each other
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
@@ -45,9 +45,12 @@ public class BBMecanumDrive {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hwMap.get(IMU.class, "imu");
+        // Change these orientations depending on how the Control Hub is positioned
+        // on the robot.
+        // CHECK: Is this set correctly when testing driving?
         RevHubOrientationOnRobot hubOrientation = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
 
         imu.initialize(new IMU.Parameters(hubOrientation));
 
@@ -61,8 +64,10 @@ public class BBMecanumDrive {
         double frontRightPower = forward - strafe - rotate;
 
         // Normalizing power across motors to move evenly
+        // CHECK: If robot is moving too slow, was this changed for an event?
+        // Adjust speed for outreach/non-competition events
         double maxPower = 1.0;
-        double maxSpeed = 1.0; // Adjust for outreach or non-competition events
+        double maxSpeed = 1.0;
 
         // Get the max power from all motors and to set maxPower
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
@@ -82,5 +87,22 @@ public class BBMecanumDrive {
         telemetry.addData("Right Motors",
                 "BR: %.2f, FR: %.2f",
                 backRight.getPower(), frontRight.getPower());
+    }
+
+    // May have to change some of this math to get the robot driving correctly
+    // CHECK: If robot is not driving correctly for field relative mode but driving
+    //        correctly for driver mode, is the math here correct?
+    public void driveFieldRelative(double forward, double strafe, double rotate){
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(strafe, forward);
+
+        theta = AngleUnit.normalizeRadians(theta - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+
+        double newForward = r * Math.sin(theta);
+        double newStrafe =  r * Math.cos(theta);
+
+        telemetry.addData("Driving", "Fwd: %.2f, Stf: %.2f, Rot: %.2f",
+                newForward, newStrafe, rotate);
+        this.drive(newForward, newStrafe, rotate);
     }
 }

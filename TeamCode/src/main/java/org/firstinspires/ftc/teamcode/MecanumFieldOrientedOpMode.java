@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 
 @TeleOp
-public class MecanumFieldOrientatedOpMode extends OpMode {
+public class MecanumFieldOrientedOpMode extends OpMode {
     BBMecanumDrive drive = new BBMecanumDrive();
     Intake intake = new Intake();
 

@@ -42,8 +42,8 @@ public class DriverOrientedOp extends OpMode {
     @Override
     public void loop() {
         // CHECK: If robot is not moving correctly, check the stick inputs and scalar values
-        forward = gamepad1.left_stick_y;
-        strafe = gamepad1.left_stick_x * -1; // Inverted x input because left and right were being reversed
+        forward = gamepad1.left_stick_y * -1; //inverted y input because fwd and bwd were reversed
+        strafe = gamepad1.left_stick_x; // reset x input because left and right were being reversed
         rotate = gamepad1.right_stick_x;
 
         intakeForward = gamepad1.y;

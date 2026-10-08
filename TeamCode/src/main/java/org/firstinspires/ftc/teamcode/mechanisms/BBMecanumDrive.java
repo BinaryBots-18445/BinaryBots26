@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BBMecanumDrive {
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -20,9 +17,7 @@ public class BBMecanumDrive {
     // IMU for navigation
     private IMU imu;
 
-    //public Telemetry telemetry;
-
-    public void init(HardwareMap hwMap) {
+    public void init(HardwareMap hwMap, Telemetry tele) {
         // Declare motors
         frontLeft = hwMap.get(DcMotor.class, "frontLeft");
         backLeft = hwMap.get(DcMotor.class, "backLeft");
@@ -30,9 +25,10 @@ public class BBMecanumDrive {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
 
         // Establishing the direction and mode for the motors
-        // Direction
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        // Left motors were flipped, so we made the FL and BL motors from Reverse to Forward.
+        // CHECK: Wheels are rotating correctly when testing and not fighting each other
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
 
@@ -42,12 +38,23 @@ public class BBMecanumDrive {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // Zero Power Mode - Brake so robot does not move when not receiving power
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         imu = hwMap.get(IMU.class, "imu");
+        // Change these orientations depending on how the Control Hub is positioned
+        // on the robot.
+        // CHECK: Is this set correctly when testing driving?
         RevHubOrientationOnRobot hubOrientation = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
 
         imu.initialize(new IMU.Parameters(hubOrientation));
+
+        telemetry = tele;
     }
 
     public void drive(double forward, double strafe, double rotate) {
@@ -57,8 +64,10 @@ public class BBMecanumDrive {
         double frontRightPower = forward - strafe - rotate;
 
         // Normalizing power across motors to move evenly
+        // CHECK: If robot is moving too slow, was this changed for an event?
+        // Adjust speed for outreach/non-competition events
         double maxPower = 1.0;
-        double maxSpeed = 1.0; // Adjust for outreach or non-competition events
+        double maxSpeed = 1.0;
 
         // Get the max power from all motors and to set maxPower
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
@@ -73,26 +82,27 @@ public class BBMecanumDrive {
         frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
 
         telemetry.addData("Left Motors",
-            "FL: %.2f, BL: %.2f",
-                    frontLeft.getPower(), backLeft.getPower());
+                "FL: %.2f, BL: %.2f",
+                frontLeft.getPower(), backLeft.getPower());
         telemetry.addData("Right Motors",
                 "BR: %.2f, FR: %.2f",
                 backRight.getPower(), frontRight.getPower());
     }
 
-    // Need to update to new fork to get the imu.getRobotYawPitchRollAngles method
-    public void driveFieldRelative(double forward, double strafe, double rotate, Telemetry tele){
+    // May have to change some of this math to get the robot driving correctly
+    // CHECK: If robot is not driving correctly for field relative mode but driving
+    //        correctly for driver mode, is the math here correct?
+    public void driveFieldRelative(double forward, double strafe, double rotate){
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
-        telemetry = tele;
 
         theta = AngleUnit.normalizeRadians(theta - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         double newForward = r * Math.sin(theta);
         double newStrafe =  r * Math.cos(theta);
 
-        telemetry.addLine().addData("Driving", "Fwd: %.2f, Stf: %.2f, Rot: %.2f",
-                          newForward, newStrafe, rotate);
+        telemetry.addData("Driving", "Fwd: %.2f, Stf: %.2f, Rot: %.2f",
+                newForward, newStrafe, rotate);
         this.drive(newForward, newStrafe, rotate);
     }
 }

@@ -13,8 +13,8 @@ public class Intake {
     }
 
     public void init(HardwareMap hwMap){
-        intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+       intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
+       intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 

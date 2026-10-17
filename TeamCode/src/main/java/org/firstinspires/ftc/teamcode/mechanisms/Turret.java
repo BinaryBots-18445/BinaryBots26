@@ -45,3 +45,62 @@ public class Turret {
        Turret.setPower(-1.0);
     }
 }
+
+private double kP = 0.0001;
+private double kP = 0.0000;
+private double goalX = 0;
+private double last Error = 0;
+private double angleTolerance = 0.2;
+private double MAX_POWER = 0.6;
+private double power = 0;
+private final ElapsedTime timer = new ElapsedTime();
+public void init(HardwareMap hwMap) {
+    turret = hwMap.get(Servo.class, "turret");
+    terret.setMode(Servo.RunMode.RUN_WITHOUT_ENCODER);
+}
+
+public_void setkP(double newKP) {
+    kP = newKP;
+}
+
+public double getkP() {
+    return_kP;
+}
+public_void setkP(double newKD) {
+    kP = newKP;
+}
+
+public double getkD() {
+    return_kD;
+}
+
+public void resetTimer(){
+    timer.reset();
+}
+
+public void update(AprilTagDetection curID) {
+    double deltaTime = timer.seconds();
+    timer.reset();
+
+    if (curID == null)
+        turret.setPower(0);
+    lastError = 0;
+    return;
+
+    // --------------- start po controller --------------------------
+    double error = goalX - curID.ftcPose.bearing;
+    double pTerm = error + kP
+
+    double dterm = 0;
+    if (deltaTime > 0)
+        dTerm = ((errir - lastError) /deltaTime) * kD
+
+
+if (Math.abs(error) < angleTolerance)
+    power = 0;
+else
+    pwer = Range.clip(pTerm + dTern, - MAX_POWER, MAX_POWER
+
+            // saferty encoder check
+            turret.setPower(power);
+    lastError = error;

@@ -25,58 +25,63 @@ public class AprilTagWebcam {
     private List<AprilTagDetection> detectedTags = new ArrayList<>();
 
     private Telemetry telemetry;
+
     public void init(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-                aprilTagProcessor = new AprilTagProcessor.Builder()
-                        .setDrawTagID(true)
-                        .setDrawTagOutline(true)
-                        .setDrawAxes(true)
-                        .setDrawCubeProjection(true)
-                        .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
-                        .build();
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .build();
 
-                VisionPortal.Builder builder = new VisionPortal.Builder();
-                builder.setCamera(hwMap.get(WebcamName.class, "Webcam"));
-                builder.setCameraResolution(new Size(640, 480));
-                builder.addProcessor(aprilTagProcessor);
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera(hwMap.get(WebcamName.class, "Webcam"));
+        builder.setCameraResolution(new Size(640, 480));
+        builder.addProcessor(aprilTagProcessor);
 
-                visionPortal = builder.build();
+        visionPortal = builder.build();
     }
 
     public void update() {
         detectedTags = aprilTagProcessor.getDetections();
     }
 
-    public List<AprilTagDetection> getDetectedTags(){
+    public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
     public void displayDetectionTelemetry(List<AprilTagDetection> detectedTags) {
-        if (detectedTags == null) {return;}
+        if (detectedTags == null) {
+            return;
+        }
 
         // Let's get a single april tag
         for (AprilTagDetection detection : detectedTags) {
-            AprilTagSingleDetection myTag = (AprilTagSingleDetection) detection;
-            if (myTag.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", myTag.id, myTag.metadata.name));
+            AprilTagSingleDetection detectedId = (AprilTagSingleDetection) detection;
+            if (detectedId.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detectedId.id, detectedId.metadata.name));
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            }
-            else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", myTag.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", myTag.center.x, myTag.center.y));
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
             }
         }
+        telemetry.addLine("\nkey:\nXYZ = X (right), Y (forward), Z (up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 
     public AprilTagDetection getTagBySpecificId(int id) {
         // Let's get a single april tag
         for (AprilTagDetection detection : detectedTags) {
-            AprilTagSingleDetection myTag = (AprilTagSingleDetection) detection;
-            if (myTag.id == id){
-                return myTag;
+            AprilTagSingleDetection d = (AprilTagSingleDetection) detection;
+            if (d.id == id){
+                return detection;
             }
         }
         return null;

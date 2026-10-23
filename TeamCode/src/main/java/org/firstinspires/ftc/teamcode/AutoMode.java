@@ -23,11 +23,14 @@ public class AutoMode extends OpMode {
         runtime.reset();
     }
     @Override
+    // the robot moves at ~2fps
     public void loop() {
-        if (runtime.seconds() <= 1.0) {
+        if (runtime.seconds() <= 2.5) {
             drive.drive(1, 0, 0);
+        } else if (runtime.seconds() <= 3.5) {
+            drive.drive(0,1, 0);
         } else {
-            drive.drive(0,0,0);
+            drive.stopDrive();
         }
 
         telemetry.addData("Time:", runtime.seconds());

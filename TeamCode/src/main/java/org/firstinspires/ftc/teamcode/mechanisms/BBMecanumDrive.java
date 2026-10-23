@@ -91,6 +91,10 @@ public class BBMecanumDrive {
                 backRight.getPower(), frontRight.getPower());
     }
 
+    public void stopDrive(){
+        drive(0,0,0);
+    }
+
     // May have to change some of this math to get the robot driving correctly
     // CHECK: If robot is not driving correctly for field relative mode but driving
     //        correctly for driver mode, is the math here correct?

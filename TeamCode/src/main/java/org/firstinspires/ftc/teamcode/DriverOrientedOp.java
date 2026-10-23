@@ -10,13 +10,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
 /*
- * This is the driver oriented op mode for BB 2026 season using mecanum drive
- * This file should be the same as FieldOrientedOp except for the fact that
- * we use
- *   drive.drivee(forward, strafe, rotate);
- * instead of
- *   drive.driveFieldRelativ(forward, strafe, rotate);
- * */
+ * This is the driver oriented op mode for BB 2026 season using mecanum drive.
+ */
 @TeleOp
 public class DriverOrientedOp extends OpMode {
     BBMecanumDrive drive = new BBMecanumDrive();
@@ -24,6 +19,7 @@ public class DriverOrientedOp extends OpMode {
     AprilTagWebcam aTag = new AprilTagWebcam();
     Hopper hopper = new Hopper();
     Shooter shooter = new Shooter();
+
     // Drivetrain variables
     double forward;
     double strafe;
@@ -33,24 +29,29 @@ public class DriverOrientedOp extends OpMode {
     boolean intakeForward = false;
     boolean intakeBackward = false;
     Intake.Direction intakeDirection = Intake.Direction.STOPPED;
+    private boolean prevIntakeForward = false;
+    private boolean prevIntakeBackward = false;
 
-    //Hopper variables
+    // Hopper variables
     boolean hopperForward = false;
     boolean hopperBackward = false;
     Hopper.Direction hopperDirection = Hopper.Direction.STOPPED;
+    private boolean prevHopperForward = false;
+    private boolean prevHopperBackward = false;
+
+    // Shooter variables
     boolean shooterForward = false;
     boolean shooterBackward = false;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
-
-    // April Tag Variables
-
+    private boolean prevShooterForward = false;
+    private boolean prevShooterBackward = false;
 
     @Override
     public void init() {
         drive.init(hardwareMap, this.telemetry);
-        // Re-enable once we have a motor for the intake
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
+        shooter.init(hardwareMap); //added shooter init
         aTag.init(hardwareMap, this.telemetry);
 
         telemetry.addData("Initialization", "Init complete");
@@ -59,104 +60,92 @@ public class DriverOrientedOp extends OpMode {
 
     @Override
     public void loop() {
-        // CHECK: If robot is not moving correctly, check the stick inputs and scalar values
-        forward = gamepad1.left_stick_y * -1; //inverted y input because fwd and bwd were reversed
-        strafe = gamepad1.left_stick_x; // reset x input because left and right were being reversed
+        // Drivetrain inputs
+        //CHECK: If robot is not moving correctly, check the stick inputs and scalar values
+        //CHECK: all names in hardware map
+        //Pollen pusher servo is not defined as a 90 degree, redefine it correctly in the expansion hub hardware map.
+        forward = gamepad1.left_stick_y * -1; // inverted y input
+        strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
-
-        intakeForward = gamepad1.right_bumper;
-        intakeBackward = gamepad1.right_trigger_pressed;
-
-        hopperForward = gamepad1.left_trigger_pressed;
-        //put this in if we need it to go backwards if we dont take it out
-        hopperBackward = gamepad1.left_bumper;
-        shooterForward = gamepad1.left_trigger_pressed;
-        //put this in if we need it to go backwards if we dont take it out
-        shooterBackward = gamepad1.left_bumper;
 
         drive.drive(forward, strafe, rotate);
 
-        // Re-enable once we have a motor for the intake
-        // Will need debouncing for intake functionality:
-        // If we press the rb button
-        if (intakeForward) {
-            // And intake is not already running forwards
-            if (intakeDirection != Intake.Direction.FORWARD) {
-                // Start intake because we are stopped or are running backwards
+        // Gamepad2 inputs
+        intakeForward = gamepad2.right_bumper;
+        intakeBackward = gamepad2.right_trigger_pressed;
+
+        hopperForward = gamepad2.left_trigger_pressed;
+        hopperBackward = gamepad2.left_bumper;
+
+        shooterForward = gamepad2.y;
+        shooterBackward = gamepad2.a;
+
+        // INTAKE CONTROLS (Toggle with debouncing)
+        if (intakeForward && !prevIntakeForward) {
+            if (intakeDirection == Intake.Direction.FORWARD) {
+                intake.stopIntake();
+                intakeDirection = Intake.Direction.STOPPED;
+            } else {
                 intake.runIntakeForwards();
                 intakeDirection = Intake.Direction.FORWARD;
-            } else { // We are already running forwards. A second press should stop the intake
+            }
+        } else if (intakeBackward && !prevIntakeBackward) {
+            if (intakeDirection == Intake.Direction.BACKWARD) {
                 intake.stopIntake();
                 intakeDirection = Intake.Direction.STOPPED;
-            }
-        }
-
-        //    If we press the rt button
-        if (intakeBackward) {
-            // And intake is not already running backwards
-            if (intakeDirection != Intake.Direction.BACKWARD) {
-                // Start running intake backward
+            } else {
                 intake.runIntakeBackwards();
                 intakeDirection = Intake.Direction.BACKWARD;
-            } else { // We are already running backwards. A second press should stop the intake
-                intake.stopIntake();
-                intakeDirection = Intake.Direction.STOPPED;
             }
         }
-        // If we press the lt button
-        if (shooterForward) {
-            // And hopper is not already running forwards
-            if (shooterDirection != shooterDirection.Direction.FORWARD) {
-                // Start hopper because we are stopped or are running backwards
-                shooterDirection.runshooterForwards();
-                shooterDirection = shooterDirection.Direction.FORWARD;
-            } else { // We are already running forwards. A second press should stop the hopper
-                shooterDirection.stopshooter();
-                shooterDirection = shooterDirection.Direction.STOPPED;
-            }
-        }
-        //    If we press the lb button
-        //we might not need this if we do comment everything bellow back in
-        if (shooterBackward) {
-            //And hopper is not already running backwards
-            if (shooterDirection != Shooter.Direction.BACKWARD) {
-                // Start running hopper Backward
-                shooter.runshooterBackwards();
-                shooterDirection = Shooter.Direction.BACKWARD;
-            } else { // We are already running backwards. A second press should stop the hopper
+        prevIntakeForward = intakeForward;
+        prevIntakeBackward = intakeBackward;
+
+        // SHOOTER CONTROLS (Toggle with debouncing)
+        if (shooterForward && !prevShooterForward) {
+            if (shooterDirection == Shooter.Direction.FORWARD) {
                 shooter.stopshooter();
                 shooterDirection = Shooter.Direction.STOPPED;
-                // If we press the lt button
-                if (hopperForward) {
-                    // And hopper is not already running forwards
-                    if (hopperDirection != Hopper.Direction.FORWARD) {
-                        // Start hopper because we are stopped or are running backwards
-                        hopper.runhopperForwards();
-                        hopperDirection = Hopper.Direction.FORWARD;
-                    } else { // We are already running forwards. A second press should stop the hopper
-                        hopper.stophopper();
-                        hopperDirection = Hopper.Direction.STOPPED;
-                    }
-                }
-                //    If we press the lb button
-                //we might not need this if we do comment everything bellow back in
-                if (hopperBackward) {
-                    //And hopper is not already running backwards
-                    if (hopperDirection != Hopper.Direction.BACKWARD) {
-                        // Start running hopper Backward
-                        hopper.runhopperBackwards();
-                        hopperDirection = Hopper.Direction.BACKWARD;
-                    } else { // We are already running backwards. A second press should stop the hopper
-                        hopper.stophopper();
-                        hopperDirection = Hopper.Direction.STOPPED;
-                        boolean updated = telemetry.update();
-                        if (!updated) {
-                            telemetry.addLine().addData("Last telemetry update failed", "");
-                        }
-
-                    }
-                }
+            } else {
+                shooter.runshooterForwards();
+                shooterDirection = Shooter.Direction.FORWARD;
+            }
+        } else if (shooterBackward && !prevShooterBackward) {
+            if (shooterDirection == Shooter.Direction.BACKWARD) {
+                shooter.stopshooter();
+                shooterDirection = Shooter.Direction.STOPPED;
+            } else {
+                shooter.runshooterBackwards();
+                shooterDirection = Shooter.Direction.BACKWARD;
             }
         }
+        prevShooterForward = shooterForward;
+        prevShooterBackward = shooterBackward;
+
+        // HOPPER CONTROLS (Toggle with debouncing)
+        if (hopperForward && !prevHopperForward) {
+            if (hopperDirection == Hopper.Direction.FORWARD) {
+                hopper.stophopper();
+                hopperDirection = Hopper.Direction.STOPPED;
+            } else {
+                hopper.runhopperForwards();
+                hopperDirection = Hopper.Direction.FORWARD;
+            }
+        } else if (hopperBackward && !prevHopperBackward) {
+            if (hopperDirection == Hopper.Direction.BACKWARD) {
+                hopper.stophopper();
+                hopperDirection = Hopper.Direction.STOPPED;
+            } else {
+                hopper.runhopperBackwards();
+                hopperDirection = Hopper.Direction.BACKWARD;
+            }
+        }
+        prevHopperForward = hopperForward;
+        prevHopperBackward = hopperBackward;
+
+        telemetry.addData("Intake State", intakeDirection);
+        telemetry.addData("Shooter State", shooterDirection);
+        telemetry.addData("Hopper State", hopperDirection);
+        telemetry.update();
     }
 }

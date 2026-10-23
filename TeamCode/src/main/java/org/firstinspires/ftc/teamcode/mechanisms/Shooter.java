@@ -9,15 +9,7 @@ public class Shooter {
     public enum Direction {
         FORWARD,
         BACKWARD,
-        STOPPED;
-
-        public Shooter.Direction Direction;
-
-        public void runshooterForwards() {
-        }
-
-        public void stopshooter() {
-        }
+        STOPPED
     }
 
     public void init(HardwareMap hwMap){

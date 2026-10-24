@@ -40,11 +40,10 @@ public class DriverOrientedOp extends OpMode {
     private boolean prevHopperBackward = false;
 
     // Shooter variables
-    boolean shooterForward = false;
-    boolean shooterBackward = false;
+    boolean shooterEnabled = false;
+    double shooterPower;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
-    private boolean prevShooterForward = false;
-    private boolean prevShooterBackward = false;
+    private boolean prevShooterEnabled = false;
 
     @Override
     public void init() {
@@ -77,8 +76,8 @@ public class DriverOrientedOp extends OpMode {
         hopperForward = gamepad2.left_trigger_pressed;
         hopperBackward = gamepad2.left_bumper;
 
-        shooterForward = gamepad2.y;
-        shooterBackward = gamepad2.a;
+        shooterEnabled = gamepad2.y;
+        shooterPower = gamepad2.right_stick_y;
 
         // INTAKE CONTROLS (Toggle with debouncing)
         if (intakeForward && !prevIntakeForward) {
@@ -101,26 +100,25 @@ public class DriverOrientedOp extends OpMode {
         prevIntakeForward = intakeForward;
         prevIntakeBackward = intakeBackward;
 
+        //Changed shooter to be powered on a number value instead of bool
         // SHOOTER CONTROLS (Toggle with debouncing)
-        if (shooterForward && !prevShooterForward) {
+        if (shooterEnabled && !prevShooterEnabled) {
             if (shooterDirection == Shooter.Direction.FORWARD) {
-                shooter.stopshooter();
                 shooterDirection = Shooter.Direction.STOPPED;
             } else {
-                shooter.runshooterForwards();
                 shooterDirection = Shooter.Direction.FORWARD;
             }
-        } else if (shooterBackward && !prevShooterBackward) {
-            if (shooterDirection == Shooter.Direction.BACKWARD) {
-                shooter.stopshooter();
-                shooterDirection = Shooter.Direction.STOPPED;
-            } else {
-                shooter.runshooterBackwards();
-                shooterDirection = Shooter.Direction.BACKWARD;
-            }
         }
-        prevShooterForward = shooterForward;
-        prevShooterBackward = shooterBackward;
+        prevShooterEnabled = shooterEnabled;
+
+        // Apply power based on current state every loop
+        if (shooterDirection == Shooter.Direction.FORWARD) {
+            shooter.runshooter(shooterPower); // Updates continuously with stick movement
+        } else if (shooterDirection == Shooter.Direction.BACKWARD) {
+            shooter.runshooter(-shooterPower);
+        } else {
+            shooter.stopshooter();
+        }
 
         // HOPPER CONTROLS (Toggle with debouncing)
         if (hopperForward && !prevHopperForward) {
@@ -146,6 +144,7 @@ public class DriverOrientedOp extends OpMode {
         telemetry.addData("Intake State", intakeDirection);
         telemetry.addData("Shooter State", shooterDirection);
         telemetry.addData("Hopper State", hopperDirection);
+        telemetry.addData("Shooter Power", shooterPower);
         telemetry.update();
     }
 }

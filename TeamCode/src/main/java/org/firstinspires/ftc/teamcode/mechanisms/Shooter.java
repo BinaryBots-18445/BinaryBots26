@@ -18,20 +18,15 @@ public class Shooter {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void runshooterForwards() {
-        shooter.setPower(1.0);
-    }
-
     public void stopshooter(){
         shooter.setPower(0);
     }
 
-    public void runshooterBackwards(){
-        shooter.setPower(-1.0);
+    public void runshooter(double power) {
+        shooter.setPower(power);
     }
 
     // our turret should rotate
     // rotateTurret
-
 
 }

@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Hopper;
@@ -41,9 +43,12 @@ public class DriverOrientedOp extends OpMode {
 
     // Shooter variables
     boolean shooterEnabled = false;
-    double shooterPower;
+    double shooterPower = 2000;
+    boolean shooterStart = false;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
     private boolean prevShooterEnabled = false;
+    boolean bpressed = false;
+    boolean apressed = false;
 
     @Override
     public void init() {
@@ -51,7 +56,7 @@ public class DriverOrientedOp extends OpMode {
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
         shooter.init(hardwareMap); //added shooter init
-        aTag.init(hardwareMap, this.telemetry);
+       // aTag.init(hardwareMap, this.telemetry);
 
         telemetry.addData("Initialization", "Init complete");
         telemetry.update();
@@ -65,7 +70,7 @@ public class DriverOrientedOp extends OpMode {
         //Pollen pusher servo is not defined as a 90 degree, redefine it correctly in the expansion hub hardware map.
         forward = gamepad1.left_stick_y * -1; // inverted y input
         strafe = gamepad1.left_stick_x;
-        rotate = gamepad1.right_stick_x;
+        rotate = gamepad1.right_stick_x * -1;
 
         drive.drive(forward, strafe, rotate);
 
@@ -77,7 +82,7 @@ public class DriverOrientedOp extends OpMode {
         hopperBackward = gamepad2.left_bumper;
 
         shooterEnabled = gamepad2.y;
-        shooterPower = gamepad2.right_stick_y;
+        //shooterPower = gamepad2.right_stick_y;
 
         // INTAKE CONTROLS (Toggle with debouncing)
         if (intakeForward && !prevIntakeForward) {
@@ -103,21 +108,26 @@ public class DriverOrientedOp extends OpMode {
         //Changed shooter to be powered on a number value instead of bool
         // SHOOTER CONTROLS (Toggle with debouncing)
         if (shooterEnabled && !prevShooterEnabled) {
-            if (shooterDirection == Shooter.Direction.FORWARD) {
-                shooterDirection = Shooter.Direction.STOPPED;
-            } else {
-                shooterDirection = Shooter.Direction.FORWARD;
-            }
+             shooterStart = !shooterStart;
         }
         prevShooterEnabled = shooterEnabled;
 
-        // Apply power based on current state every loop
-        if (shooterDirection == Shooter.Direction.FORWARD) {
-            shooter.runshooter(shooterPower); // Updates continuously with stick movement
-        } else if (shooterDirection == Shooter.Direction.BACKWARD) {
-            shooter.runshooter(-shooterPower);
+        if (gamepad2.b && !bpressed) {
+            shooterPower += 100;
+        }
+        bpressed = gamepad2.b;
+
+        if (gamepad2.a && !apressed) {
+            shooterPower -= 100;
+        }
+        apressed = gamepad2.a;
+        // Apply power
+        if (shooterStart) {
+            shooter.runshooter(shooterPower);
+            shooterDirection = Shooter.Direction.FORWARD;
         } else {
             shooter.stopshooter();
+            shooterDirection = Shooter.Direction.STOPPED;
         }
 
         // HOPPER CONTROLS (Toggle with debouncing)
@@ -145,6 +155,7 @@ public class DriverOrientedOp extends OpMode {
         telemetry.addData("Shooter State", shooterDirection);
         telemetry.addData("Hopper State", hopperDirection);
         telemetry.addData("Shooter Power", shooterPower);
+        telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
         telemetry.update();
     }
 }

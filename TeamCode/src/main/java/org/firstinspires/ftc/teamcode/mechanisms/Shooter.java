@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Shooter {
-    private DcMotor shooter;
+    public DcMotorEx motor;
 
     public enum Direction {
         FORWARD,
@@ -13,17 +14,17 @@ public class Shooter {
     }
 
     public void init(HardwareMap hwMap){
-        shooter = hwMap.get(DcMotor.class, "shooterMotor");
-        shooter.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor = hwMap.get(DcMotorEx.class, "shooterMotor");
+        motor.setDirection(DcMotorEx.Direction.FORWARD);
+        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     public void stopshooter(){
-        shooter.setPower(0);
+        motor.setVelocity(0);
     }
 
-    public void runshooter(double power) {
-        shooter.setPower(power);
+    public void runshooter(double Velocity) {
+        motor.setVelocity(Velocity);
     }
 
     // our turret should rotate

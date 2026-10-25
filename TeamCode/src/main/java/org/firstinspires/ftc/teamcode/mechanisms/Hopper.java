@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Hopper {
-    private DcMotor hopperMotor;
+    private CRServo hopperMotor;
 
     public enum Direction {
         FORWARD,
@@ -13,9 +14,9 @@ public class Hopper {
     }
 
     public void init(HardwareMap hwMap){
-       hopperMotor = hwMap.get(DcMotor.class, "hopperMotor");
-       hopperMotor.setDirection(DcMotor.Direction.FORWARD);
-        hopperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       hopperMotor = hwMap.get(CRServo.class, "hopper");
+       hopperMotor.setDirection(CRServo.Direction.FORWARD);
+        //hopperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void runhopperForwards(){

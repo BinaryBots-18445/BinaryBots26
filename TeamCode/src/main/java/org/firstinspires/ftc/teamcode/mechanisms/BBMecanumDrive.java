@@ -30,8 +30,8 @@ public class BBMecanumDrive {
         // Left motors were flipped, so the normal code also had to be flipped.
         // So we made the FL and BL motors from Reverse to Forward.
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Mode - set this to use encoders to prevent drift

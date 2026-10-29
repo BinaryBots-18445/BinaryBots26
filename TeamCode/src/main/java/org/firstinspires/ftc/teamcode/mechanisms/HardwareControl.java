@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
@@ -98,10 +99,10 @@ public class HardwareControl {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontleft = opMode.hardwareMap.get(DcMotorEx.class, "frontleft");
-        frontright = opMode.hardwareMap.get(DcMotorEx.class, "frontright");
-        backleft = opMode.hardwareMap.get(DcMotorEx.class, "backleft");
-        backright = opMode.hardwareMap.get(DcMotorEx.class, "backright");
+        frontleft = opMode.hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontright = opMode.hardwareMap.get(DcMotorEx.class, "frontRight");
+        backleft = opMode.hardwareMap.get(DcMotorEx.class, "backLeft");
+        backright = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
         shooter = opMode.hardwareMap.get(DcMotorEx.class, "shooter");
         intake = opMode.hardwareMap.get(DcMotorEx.class, "intake");
         agitator = opMode.hardwareMap.get(CRServo.class, "agitator");
@@ -110,9 +111,9 @@ public class HardwareControl {
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         frontleft.setDirection(DcMotor.Direction.FORWARD);
-        frontright.setDirection(DcMotor.Direction.REVERSE);
-        backleft.setDirection(DcMotor.Direction.FORWARD);
-        backright.setDirection(DcMotor.Direction.FORWARD);
+        frontright.setDirection(DcMotor.Direction.FORWARD);
+        backleft.setDirection(DcMotor.Direction.REVERSE);
+        backright.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotor.Direction.REVERSE);
 
         frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

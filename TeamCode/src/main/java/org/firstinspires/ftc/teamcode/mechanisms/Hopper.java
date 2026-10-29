@@ -20,13 +20,13 @@ public class Hopper {
     }
 
     public void runhopperForwards(){
-        hopperMotor.setPower(1.0);
+        hopperMotor.setPower(-1.0);
     }
 
     public void stophopper() { hopperMotor.setPower(0);
     }
 
     public void runhopperBackwards(){
-        hopperMotor.setPower(-1.0);
+        hopperMotor.setPower(1.0);
     }
 }

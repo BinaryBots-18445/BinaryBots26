@@ -27,6 +27,8 @@ public class DriverOrientedOp extends OpMode {
     double strafe;
     double rotate;
 
+    boolean slowMode = false;
+
     // Intake variables
     boolean intakeForward = false;
     boolean intakeBackward = false;
@@ -43,12 +45,13 @@ public class DriverOrientedOp extends OpMode {
 
     // Shooter variables
     boolean shooterEnabled = false;
-    double shooterPower = 2000;
+    double shooterPower = 1200;
     boolean shooterStart = false;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
     private boolean prevShooterEnabled = false;
     boolean bpressed = false;
     boolean apressed = false;
+    boolean aPressedLast = gamepad1.a;
 
     @Override
     public void init() {
@@ -70,9 +73,17 @@ public class DriverOrientedOp extends OpMode {
         //Pollen pusher servo is not defined as a 90 degree, redefine it correctly in the expansion hub hardware map.
         forward = gamepad1.left_stick_y * -1; // inverted y input
         strafe = gamepad1.left_stick_x;
-        rotate = gamepad1.right_stick_x * -1;
+        rotate = gamepad1.right_stick_x;
 
-        drive.drive(forward, strafe, rotate);
+        if (gamepad1.a && !aPressedLast) {
+            slowMode = !slowMode; //toggle
+        }
+        aPressedLast = gamepad1.a;
+
+
+        double speedMult = slowMode ? 0.5 : 1.0;
+
+        drive.drive(forward, strafe, rotate, speedMult);
 
         // Gamepad2 inputs
         intakeForward = gamepad2.right_bumper;

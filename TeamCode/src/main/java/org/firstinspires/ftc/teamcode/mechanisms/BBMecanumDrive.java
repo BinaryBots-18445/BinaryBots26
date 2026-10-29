@@ -59,7 +59,7 @@ public class BBMecanumDrive {
         telemetry = tele;
     }
 
-    public void drive(double forward, double strafe, double rotate) {
+    public void drive(double forward, double strafe, double rotate, double speedmultiplyer) {
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower = forward - strafe + rotate;
         double backRightPower = forward + strafe - rotate;
@@ -92,13 +92,13 @@ public class BBMecanumDrive {
     }
 
     public void stopDrive(){
-        drive(0,0,0);
+        drive(0,0,0, 0);
     }
 
     // May have to change some of this math to get the robot driving correctly
     // CHECK: If robot is not driving correctly for field relative mode but driving
     //        correctly for driver mode, is the math here correct?
-    public void driveFieldRelative(double forward, double strafe, double rotate){
+    public void driveFieldRelative(double forward, double strafe, double rotate, double speedmult){
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
 
@@ -109,6 +109,6 @@ public class BBMecanumDrive {
 
         telemetry.addData("Driving", "Fwd: %.2f, Stf: %.2f, Rot: %.2f",
                 newForward, newStrafe, rotate);
-        this.drive(newForward, newStrafe, rotate);
+        this.drive(newForward, newStrafe, rotate, speedmult);
     }
 }

@@ -71,10 +71,10 @@ public class HardwareControl {
     protected DcMotorEx frontright = null;
     protected DcMotorEx backleft = null;
     protected DcMotorEx backright = null;
-    protected DcMotorEx intake = null;
-    protected DcMotor shooter = null;
-    protected CRServo agitator = null;
-    protected DcMotor feeder = null;
+    // protected DcMotorEx intake = null;
+    // protected DcMotor shooter = null;
+    // protected CRServo agitator = null;
+    // protected DcMotor feeder = null;
     LinearOpMode opMode;
     //counts per motor rev means the number the encoder gives you when the shaft of the motor completes one full turn/revolution
     //https://www.andymark.com/products/neverest-classic-40-gearmotor
@@ -103,24 +103,24 @@ public class HardwareControl {
         frontright = opMode.hardwareMap.get(DcMotorEx.class, "frontRight");
         backleft = opMode.hardwareMap.get(DcMotorEx.class, "backLeft");
         backright = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
-        shooter = opMode.hardwareMap.get(DcMotorEx.class, "shooter");
-        intake = opMode.hardwareMap.get(DcMotorEx.class, "intake");
-        agitator = opMode.hardwareMap.get(CRServo.class, "agitator");
-        feeder = opMode.hardwareMap.get(DcMotorEx.class, "feeder");
+        // shooter = opMode.hardwareMap.get(DcMotorEx.class, "shooterMotor");
+        // intake = opMode.hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        // agitator = opMode.hardwareMap.get(CRServo.class, "agitator");
+        // feeder = opMode.hardwareMap.get(DcMotorEx.class, "feeder");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         frontleft.setDirection(DcMotor.Direction.FORWARD);
-        frontright.setDirection(DcMotor.Direction.FORWARD);
-        backleft.setDirection(DcMotor.Direction.REVERSE);
+        frontright.setDirection(DcMotor.Direction.REVERSE);
+        backleft.setDirection(DcMotor.Direction.FORWARD);
         backright.setDirection(DcMotor.Direction.REVERSE);
-        shooter.setDirection(DcMotor.Direction.REVERSE);
+        // shooter.setDirection(DcMotor.Direction.REVERSE);
 
         frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // note from raymond: maybe we should use RUN_TO_POSITION instead?
         frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -131,9 +131,9 @@ public class HardwareControl {
         frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        feeder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // feeder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
         opMode.telemetry.addData(
@@ -175,10 +175,22 @@ public class HardwareControl {
 
 
     public void fourWheelMoveRobotForwardInches(double inches) {
-        encoderDrive(20.0, DRIVE_SPEED, 0, inches, 0, inches);
+        encoderDrive(20.0, DRIVE_SPEED, inches, inches, inches, inches);
     }
     public void mechanumMoveRobotForwardInches(double inches) {
-        encoderDrive(20.0, DRIVE_SPEED, 0, inches, 0, inches);
+        encoderDrive(20.0, DRIVE_SPEED, inches, inches, inches, inches);
+    }
+    public void StrafeRobotInches(double inches) {
+        // Positive inches = Strafe Right, Negative inches = Strafe Left
+        encoderDrive(20.0, DRIVE_SPEED, inches, -inches, -inches, inches);
+    }
+
+    public void mechanumStrafeRightInches(double inches) {
+        encoderDrive(20.0, DRIVE_SPEED, inches, -inches, -inches, inches);
+    }
+
+    public void mechanumStrafeLeftInches(double inches) {
+        encoderDrive(20.0, DRIVE_SPEED, -inches, inches, inches, -inches);
     }
 
     public void makeRobotDoSquare() {
@@ -189,10 +201,10 @@ public class HardwareControl {
     }
 
     public void fourWheelMoveRobotBackwardsInches(double inches) {
-        encoderDrive(20.0, DRIVE_SPEED, 0, -inches, 0, -inches);
+        encoderDrive(20.0, DRIVE_SPEED, -inches, -inches, -inches, -inches);
     }
     public void mechanumMoveRobotBackwardsInches(double inches) {
-        encoderDrive(20.0, DRIVE_SPEED, 0, -inches, 0, -inches);
+        encoderDrive(20.0, DRIVE_SPEED, -inches, -inches, -inches, -inches);
     }
 
     public void turnWithGyro(double degrees, double tolerance) {

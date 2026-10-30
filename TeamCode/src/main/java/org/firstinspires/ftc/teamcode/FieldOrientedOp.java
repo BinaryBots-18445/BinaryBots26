@@ -72,7 +72,7 @@ public class FieldOrientedOp extends OpMode {
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
 
-        drive.driveFieldRelative(forward, strafe, rotate);
+        drive.driveFieldRelative(forward, strafe, rotate, 1);
 
         // Gamepad2 inputs
         intakeForward = gamepad2.right_bumper;

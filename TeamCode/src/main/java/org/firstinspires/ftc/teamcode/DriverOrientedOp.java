@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Hopper;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.mechanisms.Pusher;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
 /*
@@ -21,6 +22,7 @@ public class DriverOrientedOp extends OpMode {
     AprilTagWebcam aTag = new AprilTagWebcam();
     Hopper hopper = new Hopper();
     Shooter shooter = new Shooter();
+    Pusher pusher = new Pusher();
 
     // Drivetrain variables
     double forward;
@@ -51,13 +53,15 @@ public class DriverOrientedOp extends OpMode {
     private boolean prevShooterEnabled = false;
     boolean bpressed = false;
     boolean apressed = false;
-    boolean aPressedLast = gamepad1.a;
+    boolean xPressedLast = false;
+    boolean aPressedLast = false;
 
     @Override
     public void init() {
         drive.init(hardwareMap, this.telemetry);
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
+        pusher.init(hardwareMap);
         shooter.init(hardwareMap); //added shooter init
        // aTag.init(hardwareMap, this.telemetry);
 
@@ -132,6 +136,13 @@ public class DriverOrientedOp extends OpMode {
             shooterPower -= 100;
         }
         apressed = gamepad2.a;
+
+        if (gamepad2.x && !xPressedLast) {
+            pusher.changePostion();
+        }
+        xPressedLast = gamepad2.x;
+
+
         // Apply power
         if (shooterStart) {
             shooter.runshooter(shooterPower);

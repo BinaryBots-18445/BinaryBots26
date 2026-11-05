@@ -16,6 +16,7 @@ public class Shooter {
     public void init(HardwareMap hwMap){
         motor = hwMap.get(DcMotorEx.class, "shooterMotor");
         motor.setDirection(DcMotorEx.Direction.FORWARD);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 

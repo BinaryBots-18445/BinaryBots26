@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -9,10 +10,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BBMecanumDrive {
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    private DcMotor frontRight;
+    private DcMotorEx frontLeft;
+    private DcMotorEx backLeft;
+    private DcMotorEx backRight;
+    private DcMotorEx frontRight;
     private Telemetry telemetry;
 
     // IMU for navigation
@@ -20,31 +21,31 @@ public class BBMecanumDrive {
 
     public void init(HardwareMap hwMap, Telemetry tele) {
         // Declare motors
-        frontLeft = hwMap.get(DcMotor.class, "frontLeft");
-        backLeft = hwMap.get(DcMotor.class, "backLeft");
-        backRight = hwMap.get(DcMotor.class, "backRight");
-        frontRight = hwMap.get(DcMotor.class, "frontRight");
+        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft");
+        backLeft = hwMap.get(DcMotorEx.class, "backLeft");
+        backRight = hwMap.get(DcMotorEx.class, "backRight");
+        frontRight = hwMap.get(DcMotorEx.class, "frontRight");
 
         // Establishing the direction and mode for the motors
         // Direction
         // Left motors were flipped, so the normal code also had to be flipped.
         // So we made the FL and BL motors from Reverse to Forward.
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
 
         // Mode - set this to use encoders to prevent drift
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         // Zero Power Mode - Brake so robot does not move when not receiving power
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         imu = hwMap.get(IMU.class, "imu");
         // Change these orientations depending on how the Control Hub is positioned
@@ -89,6 +90,12 @@ public class BBMecanumDrive {
         telemetry.addData("Right Motors",
                 "BR: %.2f, FR: %.2f",
                 backRight.getPower(), frontRight.getPower());
+        telemetry.addData("Left Motors Velocity",
+                "FL: %.2f, BL: %.2f",
+                frontLeft.getVelocity(), backLeft.getVelocity());
+        telemetry.addData("Right Motors Velocity",
+                "BR: %.2f, FR: %.2f",
+                backRight.getVelocity(), frontRight.getVelocity());  // testing wheel velocity
     }
 
     public void stopDrive(){

@@ -22,35 +22,46 @@ public class RedAuto extends LinearOpMode {
     public void runOpMode() {
         hc = new HardwareControl(this);
 
+        shooter.init(hardwareMap);
+        hopper.init(hardwareMap);
+        intake.init(hardwareMap);
+        drive.init(hardwareMap, telemetry);
+
+        waitForStart();
+
         boolean run_once = true;
         while(opModeIsActive()) {
-            telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-            telemetry.update();
+
             if(run_once)
             {
                 shooter.runshooter(1200);
-                sleep(5500);
+                sleep(2000);
+                while (shooter.motor.getVelocity() != 1200) {
+                    sleep(1);
+                    telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+                    telemetry.update();
+                }
+                sleep(2000);
 
-                //   for (int i = 0; i < 4; i++) {
-
-                    hopper.runhopperForwards();
-                    for (int i = 0; i < 5; i++) {
-                        intake.runIntakeForwards();
-                       sleep(2000);
+                    hopper.runhopperBackwards(); // add wait inbetween shots
+                  for (int i = 0; i < 5; i++) {
+                      telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+                      telemetry.update();
+                      intake.runIntakeForwards();
+                       sleep(1000);
                        intake.stopIntake();
                     }
-          //          hopper.stophopper();
-        //        }
 
+                run_once = false;
            }
             intake.stopIntake();
             hopper.stophopper();
             shooter.stopshooter();
 
-            hc.mechanumMoveRobotBackwardsInches(-100);
-            hc.mechanumStrafeLeftInches(50);
 
+            hc.mechanumMoveRobotBackwardsInches(100);
+            hc.mechanumStrafeLeftInches(-61);
+            break;
         }
-       //run_once = false;
    }
 }

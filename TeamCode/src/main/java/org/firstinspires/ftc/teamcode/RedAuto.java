@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.HardwareControl;
@@ -35,21 +36,32 @@ public class RedAuto extends LinearOpMode {
             if(run_once)
             {
                 shooter.runshooter(1200);
-                sleep(2000);
-                while (shooter.motor.getVelocity() != 1200) {
-                    sleep(1);
-                    telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-                    telemetry.update();
-                }
-                sleep(2000);
 
-                    hopper.runhopperBackwards(); // add wait inbetween shots
-                  for (int i = 0; i < 5; i++) {
-                      telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-                      telemetry.update();
+                  for (int i = 0; i < 4; i++) {
+                      for (int x = 0; x < 50; x++) {
+
+                          // Check if speed is in the target range
+                          while (shooter.motor.getVelocity() < 1180 || shooter.motor.getVelocity() > 1200) {
+                              sleep(10); // Wait
+                          }
+
+                          sleep(1);
+                          telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+                          telemetry.update();
+                      }
                       intake.runIntakeForwards();
-                       sleep(1000);
-                       intake.stopIntake();
+                      hopper.runhopperBackwards();
+                      for (int x = 0; x < 300; x++) { // sleep 0.3 sec and measure
+                          sleep(1);
+                          telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+                          telemetry.update();
+                      }
+                      hopper.stophopper();
+                     /* for (int x = 0; x < 50; x++) { // sleep 0.25 sec and measure
+                          sleep(5);
+                          telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+                          telemetry.update();
+                      }*/
                     }
 
                 run_once = false;

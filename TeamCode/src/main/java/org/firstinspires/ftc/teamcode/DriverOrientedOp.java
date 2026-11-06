@@ -178,6 +178,7 @@ public class DriverOrientedOp extends OpMode {
         telemetry.addData("Hopper State", hopperDirection);
         telemetry.addData("Shooter Power", shooterPower);
         telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+        telemetry.addData("Slowmode", slowMode);
         telemetry.update();
     }
 }

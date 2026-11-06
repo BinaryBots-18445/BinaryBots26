@@ -31,4 +31,6 @@ public class Hopper {
     public void runhopperBackwards(){
         hopperMotor.setPower(1.0);
     }
+
+    public void runhopper(double num) {hopperMotor.setPower(num);}
 }

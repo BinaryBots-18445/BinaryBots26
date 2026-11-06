@@ -59,6 +59,7 @@ public class SecondaryAuto extends LinearOpMode {
 
 
             hc.mechanumMoveRobotBackwardsInches(100);
+            hc.mechanumStrafeLeftInches(-24);
             break;
         }
     }

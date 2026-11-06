@@ -90,12 +90,12 @@ public class BBMecanumDrive {
         telemetry.addData("Right Motors",
                 "BR: %.2f, FR: %.2f",
                 backRight.getPower(), frontRight.getPower());
-        telemetry.addData("Left Motors Velocity",
+       /* telemetry.addData("Left Motors Velocity",
                 "FL: %.2f, BL: %.2f",
                 frontLeft.getVelocity(), backLeft.getVelocity());
         telemetry.addData("Right Motors Velocity",
                 "BR: %.2f, FR: %.2f",
-                backRight.getVelocity(), frontRight.getVelocity());  // testing wheel velocity
+                backRight.getVelocity(), frontRight.getVelocity());  // testing wheel velocity */
     }
 
     public void stopDrive(){

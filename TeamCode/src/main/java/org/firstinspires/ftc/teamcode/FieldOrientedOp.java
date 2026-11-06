@@ -9,11 +9,12 @@ import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.Hopper;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.mechanisms.Pusher;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
-
-//  This is the driver oriented op mode for BB 2026 season using mecanum drive.
-
+/*
+ * This is the driver oriented op mode for BB 2026 season using mecanum drive.
+ */
 @TeleOp
 public class FieldOrientedOp extends OpMode {
     BBMecanumDrive drive = new BBMecanumDrive();
@@ -21,11 +22,14 @@ public class FieldOrientedOp extends OpMode {
     AprilTagWebcam aTag = new AprilTagWebcam();
     Hopper hopper = new Hopper();
     Shooter shooter = new Shooter();
+    Pusher pusher = new Pusher();
 
     // Drivetrain variables
     double forward;
     double strafe;
     double rotate;
+
+    boolean slowMode = false;
 
     // Intake variables
     boolean intakeForward = false;
@@ -49,12 +53,15 @@ public class FieldOrientedOp extends OpMode {
     private boolean prevShooterEnabled = false;
     boolean bpressed = false;
     boolean apressed = false;
+    boolean xPressedLast = false;
+    boolean aPressedLast = false;
 
     @Override
     public void init() {
         drive.init(hardwareMap, this.telemetry);
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
+        pusher.init(hardwareMap);
         shooter.init(hardwareMap); //added shooter init
         // aTag.init(hardwareMap, this.telemetry);
 
@@ -72,7 +79,15 @@ public class FieldOrientedOp extends OpMode {
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
 
-        drive.driveFieldRelative(forward, strafe, rotate, 1);
+        if (gamepad1.a && !aPressedLast) {
+            slowMode = !slowMode; //toggle
+        }
+        aPressedLast = gamepad1.a;
+
+
+        double speedMult = slowMode ? 0.5 : 1.0;
+
+        drive.driveFieldRelative(forward, strafe, rotate, speedMult);
 
         // Gamepad2 inputs
         intakeForward = gamepad2.right_bumper;
@@ -121,6 +136,13 @@ public class FieldOrientedOp extends OpMode {
             shooterPower -= 100;
         }
         apressed = gamepad2.a;
+
+        if (gamepad2.x && !xPressedLast) {
+            pusher.changePostion();
+        }
+        xPressedLast = gamepad2.x;
+
+
         // Apply power
         if (shooterStart) {
             shooter.runshooter(shooterPower);
@@ -156,6 +178,7 @@ public class FieldOrientedOp extends OpMode {
         telemetry.addData("Hopper State", hopperDirection);
         telemetry.addData("Shooter Power", shooterPower);
         telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
+        telemetry.addData("Slowmode", slowMode);
         telemetry.update();
     }
 }

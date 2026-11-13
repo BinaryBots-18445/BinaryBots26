@@ -47,7 +47,7 @@ public class DriverOrientedOp extends OpMode {
 
     // Shooter variables
     boolean shooterEnabled = false;
-    double shooterPower = 1200;
+    double shooterPower = 1200; //max is 2400
     boolean shooterStart = false;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
     private boolean prevShooterEnabled = false;
@@ -79,13 +79,20 @@ public class DriverOrientedOp extends OpMode {
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
 
+        double speedMult = 1;
+
         if (gamepad1.a && !aPressedLast) {
             slowMode = !slowMode; //toggle
+            if (slowMode) {
+                speedMult = 0.5;
+            } else {
+                speedMult = 1;
+            }
         }
         aPressedLast = gamepad1.a;
 
 
-        double speedMult = slowMode ? 0.5 : 1.0;
+
 
         drive.drive(forward, strafe, rotate, speedMult);
 
@@ -146,6 +153,7 @@ public class DriverOrientedOp extends OpMode {
         // Apply power
         if (shooterStart) {
             shooter.runshooter(shooterPower);
+          //  shooter.powershooter();
             shooterDirection = Shooter.Direction.FORWARD;
         } else {
             shooter.stopshooter();

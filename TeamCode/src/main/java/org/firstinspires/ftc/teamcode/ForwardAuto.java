@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.Hopper;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
-@Autonomous (name="SecondaryAuto", group="Robot")
-public class SecondaryAuto extends LinearOpMode {
+@Autonomous (name="ForwardAuto", group="Robot")
+public class ForwardAuto extends LinearOpMode {
     HardwareControl hc;
     BBMecanumDrive drive = new BBMecanumDrive();
     Intake intake = new Intake();
@@ -58,8 +58,8 @@ public class SecondaryAuto extends LinearOpMode {
             shooter.stopshooter();*/
 
 
-            hc.mechanumMoveRobotBackwardsInches(100);
-            hc.mechanumStrafeLeftInches(-24);
+            hc.mechanumMoveRobotForwardInches(10);
+
             break;
         }
     }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.mechanisms.BBMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.HardwareControl;
@@ -11,8 +10,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.Hopper;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
-@Autonomous (name="RedAuto", group="Robot")
-public class RedAuto extends LinearOpMode {
+@Autonomous (name="HelpingAuto", group="Robot")
+public class HelpingAuto extends LinearOpMode {
     HardwareControl hc;
     BBMecanumDrive drive = new BBMecanumDrive();
     Intake intake = new Intake();
@@ -36,12 +35,12 @@ public class RedAuto extends LinearOpMode {
             if(run_once)
             {
                 shooter.runshooter(1200);
-
+                sleep(10000);
                   for (int i = 0; i < 4; i++) {
-                      for (int x = 0; x < 50; x++) {
+                      for (int x = 0; x < 20; x++) {
 
                           // Check if speed is in the target range
-                          while (shooter.motor.getVelocity() < 1180 || shooter.motor.getVelocity() > 1200) {
+                          while (shooter.motor.getVelocity() != 1200) {
                               sleep(10); // Wait
                           }
 
@@ -51,17 +50,12 @@ public class RedAuto extends LinearOpMode {
                       }
                       intake.runIntakeForwards();
                       hopper.runhopperBackwards();
-                      for (int x = 0; x < 300; x++) { // sleep 0.3 sec and measure
-                          sleep(1);
+                      for (int x = 0; x < 30; x++) { // sleep 0.3 sec and measure
+                          sleep(10);
                           telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
                           telemetry.update();
                       }
                       hopper.stophopper();
-                     /* for (int x = 0; x < 50; x++) { // sleep 0.25 sec and measure
-                          sleep(5);
-                          telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-                          telemetry.update();
-                      }*/
                     }
 
                 run_once = false;
@@ -71,8 +65,8 @@ public class RedAuto extends LinearOpMode {
             shooter.stopshooter();
 
 
-            hc.mechanumMoveRobotBackwardsInches(100);
-            hc.mechanumStrafeLeftInches(-61);
+            hc.mechanumMoveRobotBackwardsInches(20);
+            hc.mechanumStrafeLeftInches(60);
             break;
         }
    }

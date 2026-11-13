@@ -15,7 +15,7 @@ public void changePostion(){
     if (position) {
         Pusher.setPosition(0.5);
     } else {
-        Pusher.setPosition(0);
+        Pusher.setPosition(-1);
     }
     position = !position;
 }

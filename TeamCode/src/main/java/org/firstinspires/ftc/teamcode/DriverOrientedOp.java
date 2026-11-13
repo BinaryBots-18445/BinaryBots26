@@ -47,21 +47,24 @@ public class DriverOrientedOp extends OpMode {
 
     // Shooter variables
     boolean shooterEnabled = false;
-    double shooterPower = 1200; //max is 2400
+    double topShooterPower = 1200;
+    double bottomShooterPower = 1000;
     boolean shooterStart = false;
     Shooter.Direction shooterDirection = Shooter.Direction.STOPPED;
     private boolean prevShooterEnabled = false;
     boolean bpressed = false;
     boolean apressed = false;
+    boolean firstbpressed = false;
+    boolean firstapressed = false;
     boolean xPressedLast = false;
     boolean aPressedLast = false;
 
     @Override
     public void init() {
-        drive.init(hardwareMap, this.telemetry);
-        intake.init(hardwareMap);
-        hopper.init(hardwareMap);
-        pusher.init(hardwareMap);
+       drive.init(hardwareMap, this.telemetry);
+       intake.init(hardwareMap);
+       hopper.init(hardwareMap);
+       pusher.init(hardwareMap);
         shooter.init(hardwareMap); //added shooter init
        // aTag.init(hardwareMap, this.telemetry);
 
@@ -93,7 +96,6 @@ public class DriverOrientedOp extends OpMode {
 
 
 
-
         drive.drive(forward, strafe, rotate, speedMult);
 
         // Gamepad2 inputs
@@ -107,7 +109,7 @@ public class DriverOrientedOp extends OpMode {
         //shooterPower = gamepad2.right_stick_y;
 
         // INTAKE CONTROLS (Toggle with debouncing)
-        if (intakeForward && !prevIntakeForward) {
+      /*  if (intakeForward && !prevIntakeForward) {
             if (intakeDirection == Intake.Direction.FORWARD) {
                 intake.stopIntake();
                 intakeDirection = Intake.Direction.STOPPED;
@@ -126,7 +128,7 @@ public class DriverOrientedOp extends OpMode {
         }
         prevIntakeForward = intakeForward;
         prevIntakeBackward = intakeBackward;
-
+*/
         //Changed shooter to be powered on a number value instead of bool
         // SHOOTER CONTROLS (Toggle with debouncing)
         if (shooterEnabled && !prevShooterEnabled) {
@@ -134,32 +136,43 @@ public class DriverOrientedOp extends OpMode {
         }
         prevShooterEnabled = shooterEnabled;
 
-        if (gamepad2.b && !bpressed) {
-            shooterPower += 100;
+        if (gamepad2.b && !bpressed) { // change varibles for understanding
+            topShooterPower += 25;
         }
         bpressed = gamepad2.b;
 
         if (gamepad2.a && !apressed) {
-            shooterPower -= 100;
+            topShooterPower -= 25;
         }
         apressed = gamepad2.a;
 
-        if (gamepad2.x && !xPressedLast) {
+        if (gamepad1.b && !firstbpressed) { // temporary
+            bottomShooterPower += 25;
+        }
+        firstbpressed = gamepad1.b;
+
+        if (gamepad1.a && !firstapressed) {
+            bottomShooterPower -= 25;
+        }
+        firstapressed = gamepad1.a;
+
+    /*    if (gamepad2.x && !xPressedLast) {
             pusher.changePostion();
         }
-        xPressedLast = gamepad2.x;
+        xPressedLast = gamepad2.x;*/
 
 
         // Apply power
         if (shooterStart) {
-            shooter.runshooter(shooterPower);
+            shooter.runshooter(topShooterPower, shooter.topWheel);
+            shooter.runshooter(bottomShooterPower, shooter.bottomWheel);
           //  shooter.powershooter();
             shooterDirection = Shooter.Direction.FORWARD;
         } else {
             shooter.stopshooter();
             shooterDirection = Shooter.Direction.STOPPED;
         }
-
+/*
         // HOPPER CONTROLS (Toggle with debouncing)
         if (hopperForward && !prevHopperForward) {
             if (hopperDirection == Hopper.Direction.FORWARD) {
@@ -180,13 +193,15 @@ public class DriverOrientedOp extends OpMode {
         }
         prevHopperForward = hopperForward;
         prevHopperBackward = hopperBackward;
-
+*/
         telemetry.addData("Intake State", intakeDirection);
         telemetry.addData("Shooter State", shooterDirection);
         telemetry.addData("Hopper State", hopperDirection);
-        telemetry.addData("Shooter Power", shooterPower);
-        telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-        telemetry.addData("Slowmode", slowMode);
+        telemetry.addData("Top Shooter Power", topShooterPower);
+        telemetry.addData("Bottom Shooter Power", bottomShooterPower);
+        telemetry.addData("Top Shooter Velocity", shooter.topWheel.getVelocity());
+        telemetry.addData("Bottom Shooter Velocity", shooter.bottomWheel.getVelocity());
+        //telemetry.addData("Slowmode", slowMode);
         telemetry.update();
     }
 }

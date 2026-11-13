@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,10 +13,9 @@ import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Pusher;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
-/*
- * This is the driver oriented op mode for BB 2026 season using mecanum drive.
- */
+//This is the driver oriented op mode for BB 2026 season using mecanum drive.
 @TeleOp
+@Disabled
 public class FieldOrientedOp extends OpMode {
     BBMecanumDrive drive = new BBMecanumDrive();
     Intake intake = new Intake();
@@ -181,4 +181,4 @@ public class FieldOrientedOp extends OpMode {
         telemetry.addData("Slowmode", slowMode);
         telemetry.update();
     }
-}
+} */

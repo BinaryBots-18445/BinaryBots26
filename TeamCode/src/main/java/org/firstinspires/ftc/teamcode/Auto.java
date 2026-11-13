@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
 @Autonomous (name="RedAuto", group="Robot")
+@Disabled
 public class Auto extends LinearOpMode {
     HardwareControl hc;
     BBMecanumDrive drive = new BBMecanumDrive();
@@ -38,7 +40,7 @@ public class Auto extends LinearOpMode {
 
             if(run_once)
             {
-                shooter.runshooter(1200);
+                shooter.runshooter(1200, shooter.topWheel);
 
                   for (int i = 0; i < 4; i++) {
                       for (int x = 0; x < 20; x++) {
@@ -73,11 +75,7 @@ public class Auto extends LinearOpMode {
                       }
                       hopper.stophopper();
                       if (runtime.seconds() > 20) {break;}
-                     /* for (int x = 0; x < 50; x++) { // sleep 0.25 sec and measure
-                          sleep(5);
-                          telemetry.addData("Shooter Velocity", shooter.motor.getVelocity());
-                          telemetry.update();
-                      }*/
+
                     }
 
                 run_once = false;
@@ -100,3 +98,4 @@ public class Auto extends LinearOpMode {
         }
    }
 }
+*/

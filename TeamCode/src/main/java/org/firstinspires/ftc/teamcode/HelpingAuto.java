@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 
 @Autonomous (name="HelpingAuto", group="Robot")
+@Disabled
 public class HelpingAuto extends LinearOpMode {
     HardwareControl hc;
     BBMecanumDrive drive = new BBMecanumDrive();
@@ -70,4 +72,4 @@ public class HelpingAuto extends LinearOpMode {
             break;
         }
    }
-}
+}*/

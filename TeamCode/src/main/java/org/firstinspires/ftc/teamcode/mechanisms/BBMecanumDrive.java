@@ -61,10 +61,10 @@ public class BBMecanumDrive {
     }
 
     public void drive(double forward, double strafe, double rotate, double speedmultiplyer) {
-        double frontLeftPower = forward + strafe + rotate *speedmultiplyer;
-        double backLeftPower = forward - strafe + rotate *speedmultiplyer;
-        double backRightPower = forward + strafe - rotate *speedmultiplyer;
-        double frontRightPower = forward - strafe - rotate *speedmultiplyer;
+        double frontLeftPower = (forward + strafe + rotate) *speedmultiplyer;
+        double backLeftPower = (forward - strafe + rotate) *speedmultiplyer;
+        double backRightPower = (forward + strafe - rotate) *speedmultiplyer;
+        double frontRightPower = (forward - strafe - rotate) *speedmultiplyer;
 
         // Normalizing power across motors to move evenly
         // CHECK: If robot is moving too slow, was this changed for an event?

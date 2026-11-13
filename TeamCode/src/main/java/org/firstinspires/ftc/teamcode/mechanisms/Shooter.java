@@ -6,14 +6,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Shooter {
-    public DcMotorEx motor;
-    double p = 5; //8
+    public DcMotorEx topWheel;
+    public DcMotorEx bottomWheel;
+    double p = 10; //8
     double i = 0;
 
-    double d = 0.1;
+    double d = 0.3;
     double f = 12.2;//11.62 // Variable for PID overshooting. 32767/maxVelocity(2820) /12.65 normal 13.85
     private double nominalVoltage = 14;
-    private double targetVelocity = 1200;
+    private double topTargetVelocity = 1200;
+    private double bottomTargetVelocity = 1000;
     private double lastSentF = 0;
     private double lastTargetVelocity = 0;
     private final double VoltageTolerance = 0.05;
@@ -26,14 +28,20 @@ public class Shooter {
 
     public void init(HardwareMap hwMap){
         batterySensor = hwMap.get(VoltageSensor.class, "Control Hub");
-        motor = hwMap.get(DcMotorEx.class, "shooterMotor");
-        motor.setDirection(DcMotorEx.Direction.FORWARD);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        topWheel = hwMap.get(DcMotorEx.class, "topTurret");
+        topWheel.setDirection(DcMotorEx.Direction.FORWARD);
+        topWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        topWheel.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
+        bottomWheel = hwMap.get(DcMotorEx.class, "bottomTurret");
+        bottomWheel.setDirection(DcMotorEx.Direction.FORWARD);
+        bottomWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bottomWheel.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
     }
 
-    public void setPIDFBasedOnVoltage () {
+  /*  public void setPIDFBasedOnVoltage () {
         double currentVoltage = batterySensor.getVoltage();
         if (currentVoltage < 1) {currentVoltage = nominalVoltage;}
 
@@ -47,17 +55,26 @@ public class Shooter {
             lastSentF = compensatedF;
             lastTargetVelocity = targetVelocity;
         }
-    }
+    } */
     public void stopshooter(){
-        motor.setVelocity(0);
+        topWheel.setVelocity(0);
+        bottomWheel.setVelocity(0);
     }
 
-    public void powershooter() {motor.setPower(1);}
+    public void powershooter(DcMotorEx motor) {
+        motor.setPower(1);
+    }
 
-    public void runshooter(double Velocity) {
-        targetVelocity = Velocity;
-        setPIDFBasedOnVoltage();
-        motor.setVelocity(Velocity);
+    public void runshooter(double Velocity, DcMotorEx motor) {
+        if (motor == topWheel) {
+            topTargetVelocity = Velocity;
+            topWheel.setVelocity(-Velocity);
+        } else if (motor == bottomWheel) {
+            bottomTargetVelocity = Velocity;
+            bottomWheel.setVelocity(-Velocity);
+        }
+       // setPIDFBasedOnVoltage();
+       // motor.setVelocity(Velocity);
     }
 
     // our turret should rotate
